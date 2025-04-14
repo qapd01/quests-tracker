@@ -1,4 +1,6 @@
-use quests_tracker::{config::config_loader, infrastructure::postgres::postgres_connection};
+use std::sync::Arc;
+
+use quests_tracker::{config::config_loader, infrastructure::{axum_http::http_serve::start, postgres::postgres_connection}};
 use tracing::{error, info};
 
 
@@ -28,4 +30,8 @@ async fn main() {
     };
 
     info!("Connection to Database has been established");
+
+    start(Arc::new(dot_envy), Arc::new(postgres_pool))
+        .await
+        .expect("Failed to start server");
 }
