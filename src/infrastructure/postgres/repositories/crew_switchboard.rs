@@ -2,7 +2,7 @@ use std::sync::Arc;
 use anyhow::Result;
 use axum::async_trait;
 
-use crate::{domain::{repositories::crew_switchboard::CrewSwitchBoardRepository, value_objects::quest_adventurer_junction::QuestAdventurerJunction}, infrastructure::postgres::postgres_connection::PgPoolSquad};
+use crate::{domain::{repositories::crew_switchboard::CrewSwitchboardRepository, value_objects::quest_adventurer_junction::QuestAdventurerJunction}, infrastructure::postgres::postgres_connection::PgPoolSquad};
 
 
 pub struct CrewSwitchboardPostgres {
@@ -16,7 +16,7 @@ impl CrewSwitchboardPostgres {
 }
 
 #[async_trait]
-impl CrewSwitchBoardRepository for CrewSwitchboardPostgres {
+impl CrewSwitchboardRepository for CrewSwitchboardPostgres {
     async fn join(&self, junction_body: QuestAdventurerJunction) -> Result<()> {
         unimplemented!()
     }

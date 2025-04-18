@@ -6,7 +6,7 @@ use mockall::automock;
 
 #[async_trait]
 #[automock]
-pub trait CrewSwitchBoardRepository {
+pub trait CrewSwitchboardRepository {
     async fn join(&self, junction_body: QuestAdventurerJunction) -> Result<()>;
     async fn leave(&self, junction_body: QuestAdventurerJunction) -> Result<()>;
 }
