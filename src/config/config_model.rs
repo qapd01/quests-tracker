@@ -19,11 +19,11 @@ pub struct Database {
 #[derive(Debug, Clone)]
 pub struct AdventurersSecret {
     pub secret: String,
-    pub refresh_token: String,
+    pub refresh_secret: String,
 }
 
 #[derive(Debug, Clone)]
 pub struct GuildCommandersSecret {
     pub secret: String,
-    pub refresh_token: String,
+    pub refresh_secret: String,
 }
