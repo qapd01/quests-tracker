@@ -16,7 +16,7 @@ pub fn hash(password: String) -> Result<String> {
     Ok(result.to_string())
 }
 
-pub fn verigy(password: String, hashed_password: String) -> Result<bool> {
+pub fn verify(password: String, hashed_password: String) -> Result<bool> {
     let parsed_hash =
         PasswordHash::new(&hashed_password).map_err(|e| anyhow::anyhow!(e.to_string()))?;
     let byte_password = password.as_bytes();

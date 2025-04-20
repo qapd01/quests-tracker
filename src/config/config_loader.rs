@@ -31,20 +31,20 @@ pub fn get_stage() -> Stage {
     Stage::try_form(&stage_str).unwrap_or_default()
 }
 
-pub fn get_adventurer_secret() -> Result<AdventurersSecret> {
+pub fn get_adventurer_secret_env() -> Result<AdventurersSecret> {
     dotenvy::dotenv().ok();
 
     Ok(AdventurersSecret{
         secret: std::env::var("JWT_ADVENTURER_SECRET").expect("JWT_ADVENTURER_SECRET is invalid"),
-        refresh_token: std::env::var("JWT_ADVENTURER_REFRESH_SECRET").expect("JWT_ADVENTURER_REFRESH_SECRET is invalid"),
+        refresh_secret: std::env::var("JWT_ADVENTURER_REFRESH_SECRET").expect("JWT_ADVENTURER_REFRESH_SECRET is invalid"),
     })
 }
 
-pub fn get_guild_commander_secret() -> Result<GuildCommandersSecret> {
+pub fn get_guild_commander_secret_env() -> Result<GuildCommandersSecret> {
     dotenvy::dotenv().ok();
 
     Ok(GuildCommandersSecret{
         secret: std::env::var("JWT_GUILD_COMMANDER_SECRET").expect("JWT_GUILD_COMMANDER_SECRET is invalid"),
-        refresh_token: std::env::var("JWT_GUILD_COMMANDER_REFRESH_SECRET").expect("JWT_GUILD_COMMANDER_REFRESH_SECRET is invalid"),
+        refresh_secret: std::env::var("JWT_GUILD_COMMANDER_REFRESH_SECRET").expect("JWT_GUILD_COMMANDER_REFRESH_SECRET is invalid"),
     })
 }
