@@ -1,8 +1,28 @@
 use std::sync::Arc;
 
-use axum::{extract::{Path, State}, response::IntoResponse, routing::patch, Extension, Router};
+use axum::{
+    Extension, Router,
+    extract::{Path, State},
+    middleware,
+    response::IntoResponse,
+    routing::patch,
+};
 
-use crate::{application::usecases::journey_ledger::JourneyLedgerUseCase, domain::repositories::{journey_ledger::JourneyLedgerRepository, quest_viewing::QuestViewingRepository}, infrastructure::postgres::{postgres_connection::PgPoolSquad, repositories::{journey_ledger::JournerLedgerPostgres, quest_viewing::QuestViewingPostgres}}};
+use crate::{
+    application::usecases::journey_ledger::JourneyLedgerUseCase,
+    domain::repositories::{
+        journey_ledger::JourneyLedgerRepository, quest_viewing::QuestViewingRepository,
+    },
+    infrastructure::{
+        axum_http::middlewares::guild_commanders_authorization,
+        postgres::{
+            postgres_connection::PgPoolSquad,
+            repositories::{
+                journey_ledger::JournerLedgerPostgres, quest_viewing::QuestViewingPostgres,
+            },
+        },
+    },
+};
 
 pub fn routes(db_pool: Arc<PgPoolSquad>) -> Router {
     let journey_ledger_repository = JournerLedgerPostgres::new(Arc::clone(&db_pool));
@@ -16,6 +36,7 @@ pub fn routes(db_pool: Arc<PgPoolSquad>) -> Router {
         .route("/in-journey/:quest_id", patch(in_journey))
         .route("/to-completed/:quest_id", patch(to_completed))
         .route("/to-failed/:quest_id", patch(to_failed))
+        .route_layer(middleware::from_fn(guild_commanders_authorization))
         .with_state(Arc::new(journey_ledger_use_case))
 }
 
@@ -28,7 +49,6 @@ where
     T1: JourneyLedgerRepository + Send + Sync,
     T2: QuestViewingRepository + Send + Sync,
 {
-
 }
 
 pub async fn to_completed<T1, T2>(
@@ -40,7 +60,6 @@ where
     T1: JourneyLedgerRepository + Send + Sync,
     T2: QuestViewingRepository + Send + Sync,
 {
-
 }
 
 pub async fn to_failed<T1, T2>(
@@ -52,5 +71,4 @@ where
     T1: JourneyLedgerRepository + Send + Sync,
     T2: QuestViewingRepository + Send + Sync,
 {
-
 }
