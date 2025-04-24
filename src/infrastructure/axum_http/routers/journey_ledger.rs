@@ -3,6 +3,7 @@ use std::sync::Arc;
 use axum::{
     Extension, Router,
     extract::{Path, State},
+    http::StatusCode,
     middleware,
     response::IntoResponse,
     routing::patch,
@@ -10,8 +11,11 @@ use axum::{
 
 use crate::{
     application::usecases::journey_ledger::JourneyLedgerUseCase,
-    domain::repositories::{
-        journey_ledger::JourneyLedgerRepository, quest_viewing::QuestViewingRepository,
+    domain::{
+        repositories::{
+            journey_ledger::JourneyLedgerRepository, quest_viewing::QuestViewingRepository,
+        },
+        value_objects::quest_statuses::QuestStatuses,
     },
     infrastructure::{
         axum_http::middlewares::guild_commanders_authorization,
@@ -49,6 +53,21 @@ where
     T1: JourneyLedgerRepository + Send + Sync,
     T2: QuestViewingRepository + Send + Sync,
 {
+    match journey_ledger_use_case
+        .in_journey(quest_id, guild_commander_id)
+        .await
+    {
+        Ok(quest_id) => (
+            StatusCode::OK,
+            format!(
+                "Quest id: {}, is now {:?}",
+                quest_id,
+                QuestStatuses::InJourney
+            ),
+        )
+            .into_response(),
+        Err(e) => (StatusCode::INTERNAL_SERVER_ERROR, e.to_string()).into_response(),
+    }
 }
 
 pub async fn to_completed<T1, T2>(
@@ -60,6 +79,21 @@ where
     T1: JourneyLedgerRepository + Send + Sync,
     T2: QuestViewingRepository + Send + Sync,
 {
+    match journey_ledger_use_case
+        .to_completed(quest_id, guild_commander_id)
+        .await
+    {
+        Ok(quest_id) => (
+            StatusCode::OK,
+            format!(
+                "Quest id: {}, is now {:?}",
+                quest_id,
+                QuestStatuses::Completed
+            ),
+        )
+            .into_response(),
+        Err(e) => (StatusCode::INTERNAL_SERVER_ERROR, e.to_string()).into_response(),
+    }
 }
 
 pub async fn to_failed<T1, T2>(
@@ -71,4 +105,15 @@ where
     T1: JourneyLedgerRepository + Send + Sync,
     T2: QuestViewingRepository + Send + Sync,
 {
+    match journey_ledger_use_case
+        .to_failed(quest_id, guild_commander_id)
+        .await
+    {
+        Ok(quest_id) => (
+            StatusCode::OK,
+            format!("Quest id: {}, is now {:?}", quest_id, QuestStatuses::Failed),
+        )
+            .into_response(),
+        Err(e) => (StatusCode::INTERNAL_SERVER_ERROR, e.to_string()).into_response(),
+    }
 }
